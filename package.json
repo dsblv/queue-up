@@ -1,0 +1,41 @@
+{
+  "name": "queue-up",
+  "version": "1.0.0",
+  "description": "Simple promise-based function queue",
+  "license": "MIT",
+  "repository": "dsblv/queue-up",
+  "author": {
+    "name": "Dimzel Sobolev",
+    "email": "disobolev@icloud.com",
+    "url": "vk.com/sobo13v"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "xo && ava"
+  },
+  "files": [
+    "index.js"
+  ],
+  "keywords": [
+    "queue",
+    "enqueue",
+    "promise",
+    "then",
+    "limited",
+    "interval"
+  ],
+  "dependencies": {
+    "pinkie-promise": "^1.0.0"
+  },
+  "devDependencies": {
+    "ava": "^0.2.0",
+    "xo": "*"
+  },
+  "xo": {
+    "envs": [
+      "node"
+    ]
+  }
+}
