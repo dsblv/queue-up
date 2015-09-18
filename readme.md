@@ -37,7 +37,7 @@ queue.up()
 
 ### `queue = new Queue([interval])`
 
-#### innerval
+#### interval
 
 Type: `number`  
 Default: `1000`
