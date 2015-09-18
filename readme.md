@@ -15,21 +15,26 @@ $ npm install --save queue-up
 ## Usage
 
 ```js
-const got = require('got');
+const ghGot = require('gh-got');
 const Queue = require('queue-up');
 
-const queue = new Queue(500);
+// GitHub API allows us to make 5000 requests per hour:
 
-queue.up()
-	.then(got('github.com'))
-	.then(data => {
-		console.log('data');
-	});
+const queue = new Queue(60 * 60 * 1000 / 5000);
 
-queue.up()
-	.then(() => {
-		console.log('Next call – only after .5sec!');
-	});
+[
+	'dsblv',
+	'strikeentco',
+	'sindresorhus',
+	'octocat'
+].forEach(user => {
+	queue.up()
+		.then(ghGot('users/' + user, {token: 'koten'}))
+		.then(data => {
+			console.log(data.body.name + ' is in ' + data.body.location);
+		});
+});
+
 ```
 
 
