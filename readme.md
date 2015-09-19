@@ -40,14 +40,21 @@ const queue = new Queue(60 * 60 * 1000 / 5000);
 
 ## API
 
-### `queue = new Queue([interval])`
+### `queue = new Queue([interval], [promiseModule])`
+
+Create new instance of Queue. Or several instances if you need different queues.
 
 #### interval
 
 Type: `number`  
 Default: `1000`
 
-Create new instance of Queue. Or several instances if you need different queues.
+#### promiseModule
+
+Type: `function`  
+
+Pass custom Promise module to use instead of the native one.
+
 
 ### `queue.up()` → `promise`
 
