@@ -1,3 +1,5 @@
+'use strict';
+
 var test = require('ava');
 var pinkiePromise = global.Promise = require('pinkie-promise');
 var Queue = require('./');
@@ -34,6 +36,12 @@ test('delaying third request', function (a) {
 	return queue.up().then(function () {
 		var finish = Date.now();
 		a.ok(finish - start > 950 && finish - start < 1050);
+	});
+});
+
+test('passing value', function (a) {
+	return (new Queue()).up(1337).then(function (val) {
+		a.is(val, 1337);
 	});
 });
 
