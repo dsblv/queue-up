@@ -15,8 +15,8 @@ $ npm install --save queue-up
 ## Usage
 
 ```js
-const ghGot = require('gh-got');
-const Queue = require('queue-up');
+import ghGot from 'gh-got';
+import Queue from 'queue-up';
 
 // GitHub API allows us to make 5000 requests per hour:
 

@@ -1,54 +1,54 @@
-'use strict';
+import test from 'ava';
+import pinkiePromise from 'pinkie-promise';
+import Queue from './';
 
-var test = require('ava');
-var pinkiePromise = global.Promise = require('pinkie-promise');
-var Queue = require('./');
+global.Promise = pinkiePromise;
 
-test('not delaying first request', function (a) {
-	var queue = new Queue(500);
-	var start = Date.now();
+test('not delaying first request', a => {
+	const queue = new Queue(500);
+	const start = Date.now();
 
-	return queue.up().then(function () {
-		var finish = Date.now();
+	return queue.up().then(() => {
+		const finish = Date.now();
 		a.ok(finish - start < 100);
 	});
 });
 
-test('delaying second request', function (a) {
-	var queue = new Queue(500);
-	var start = Date.now();
+test('delaying second request', a => {
+	const queue = new Queue(500);
+	const start = Date.now();
 
 	queue.up();
 
-	return queue.up().then(function () {
-		var finish = Date.now();
+	return queue.up().then(() => {
+		const finish = Date.now();
 		a.ok(finish - start > 450 && finish - start < 550);
 	});
 });
 
-test('delaying third request', function (a) {
-	var queue = new Queue(500);
-	var start = Date.now();
+test('delaying third request', a => {
+	const queue = new Queue(500);
+	const start = Date.now();
 
 	queue.up();
 	queue.up();
 
-	return queue.up().then(function () {
-		var finish = Date.now();
+	return queue.up().then(() => {
+		const finish = Date.now();
 		a.ok(finish - start > 950 && finish - start < 1050);
 	});
 });
 
-test('passing value', function (a) {
-	return (new Queue()).up(1337).then(function (val) {
+test('passing value', a => {
+	return (new Queue()).up(1337).then(val => {
 		a.is(val, 1337);
 	});
 });
 
-test('custom Promise module', function (a) {
-	var queue = new Queue(500, pinkiePromise);
+test('custom Promise module', a => {
+	const queue = new Queue(500, pinkiePromise);
 
-	return queue.up().then(function () {
+	return queue.up().then(() => {
 		a.pass();
 	});
 });
