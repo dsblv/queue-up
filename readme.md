@@ -29,13 +29,14 @@ const users = [
 	'octocat'
 ];
 
-for (var i in users) {
+for (let i in users) {
 	queue.up(users[i])
 		.then(user => {
 			return ghGot('users/' + user, {token: 'koten'});
 		})
-		.then(data => {
-			console.log(data.body.name + ' is in ' + data.body.location);
+		.then(data => data.body)
+		.then(user => {
+			console.log(user.name + ' is in ' + user.location);
 		});
 }
 
