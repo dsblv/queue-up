@@ -15,31 +15,26 @@ $ npm install --save queue-up
 ## Usage
 
 ```js
-import ghGot from 'gh-got';
-import Queue from 'queue-up';
+const ghGot = require('gh-got');
+const Queue = require('queue-up');
 
 // GitHub API allows us to make 5000 requests per hour:
 
 const queue = new Queue(60 * 60 * 1000 / 5000);
 
-const users = [
+const usernames = [
 	'dsblv',
 	'strikeentco',
 	'sindresorhus',
 	'octocat'
 ];
 
-for (let i in users) {
-	queue.up(users[i])
-		.then(user => {
-			return ghGot('users/' + user, {token: 'koten'});
-		})
+for (let i in usernames) {
+	queue.up(usernames[i])
+		.then(username => ghGot(`users/${username}`, {token: 'koten'}))
 		.then(data => data.body)
-		.then(user => {
-			console.log(user.name + ' is in ' + user.location);
-		});
+		.then(user => console.log(`${user.name} is in ${user.location}`));
 }
-
 ```
 
 
@@ -72,10 +67,10 @@ Returns a `Promise` which is resolved in specified time after previous one.
 Value to be passed to `resolve` handler function:
 
 ```js
-queue.up('hello').then(console.log);
+queue.up('hello').then(console.log.bind(console));
 //=> hello
 ```
 
 ## License
 
-MIT © [Dimzel Sobolev](http://vk.com/sobo13v)
+MIT © [Dmitry Sobolev](https://github.com/dsblv)
