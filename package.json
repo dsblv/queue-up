@@ -5,12 +5,12 @@
   "license": "MIT",
   "repository": "dsblv/queue-up",
   "author": {
-    "name": "Dimzel Sobolev",
+    "name": "Dmirtiy Sobolev",
     "email": "disobolev@icloud.com",
-    "url": "vk.com/sobo13v"
+    "url": "github.com/dsblv"
   },
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=0.12.0"
   },
   "scripts": {
     "test": "xo && ava"
@@ -30,13 +30,10 @@
     "throttle"
   ],
   "devDependencies": {
-    "ava": "^0.3.0",
-    "pinkie-promise": "^1.0.0",
+    "ava": "^0.12.0",
     "xo": "*"
   },
-  "xo": {
-    "ignores": [
-      "test.js"
-    ]
+  "dependencies": {
+    "delay": "^1.3.1"
   }
 }

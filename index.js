@@ -1,27 +1,25 @@
 'use strict';
+var delay = require('delay');
 
-var Queue = module.exports = function (interval, P) {
-	this.interval = (interval > 0) ? interval : 1000;
-	this.nextCall = 0;
-	this.Promise = P || Promise;
+var Queue = module.exports = function (interval) {
+	this.interval = interval || 1000;
+	this.remaining = Promise.resolve();
 };
 
-Queue.prototype.up = Queue.prototype.enqueue = function (value) {
-	var now = Date.now();
+Queue.prototype.up = Queue.prototype.enqueue = function (fn) {
+	var ret = this.remaining.then(fn);
 
-	if (this.nextCall < now) {
-		this.nextCall = now;
+	this.remaining = ret.then(delay(this.interval));
+
+	return ret;
+};
+
+Queue.prototype.all = function (fns) {
+	var promises = [];
+
+	for (var fn of fns) {
+		promises.push(this.up(fn));
 	}
 
-	var remains = this.nextCall - now;
-
-	this.nextCall += this.interval;
-
-	return new this.Promise(function (resolve) {
-		var asyncSetTimer = remains || typeof setImmediate === 'undefined' ? setTimeout : setImmediate;
-
-		asyncSetTimer(function () {
-			resolve(value);
-		}, remains);
-	});
+	return Promise.all(promises);
 };

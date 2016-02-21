@@ -2,7 +2,7 @@
 
 > Simple promise-based function queue
 
-Cool way to enqueue rate-limited operations. Even cooler when used with Promise-returning functions.
+Cool way to enqueue rate-limited operations.
 
 
 ## Install
@@ -29,9 +29,12 @@ const usernames = [
 	'octocat'
 ];
 
-for (let i in usernames) {
-	queue.up(usernames[i])
-		.then(username => ghGot(`users/${username}`, {token: 'koten'}))
+opts = {
+	token: 'the-private-token'
+};
+
+for (let username of usernames) {
+	queue.up(() => ghGot(`users/${username}`, opts))
 		.then(data => data.body)
 		.then(user => console.log(`${user.name} is in ${user.location}`));
 }
@@ -40,7 +43,7 @@ for (let i in usernames) {
 
 ## API
 
-### new Queue([interval], [promiseModule])
+### new Queue([interval])
 
 Creates new instance of Queue.
 
@@ -49,28 +52,33 @@ Creates new instance of Queue.
 Type: `number`  
 Default: `1000`
 
-#### promiseModule
+
+### queue.up(fn)
+
+Alias: `queue.enqueue(fn)`
+
+Returns a `promise` that resolves to what `fn()` would resolve, but in the right time.
+
+#### fn
 
 Type: `function`  
+*Required*
 
-Pass custom Promise module to use instead of the native one.
+A `function` to be enqueued. Doesn't necessarily need to return a `promise`.
 
 
-### queue.up([value]) → `promise`
+### queue.all(fns)
 
-Alias: `queue.enqueue()`
+Like [`Promise.all()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all), but with interval between invocations.
 
-Returns a `Promise` which is resolved in specified time after previous one.
+#### fns
 
-#### value
+Type: `iterable` (e.g. `array`)  
+*Required*
 
-Value to be passed to `resolve` handler function:
+An iterable object of functions to be enqueued.
 
-```js
-queue.up('hello').then(console.log.bind(console));
-//=> hello
-```
 
 ## License
 
-MIT © [Dmitry Sobolev](https://github.com/dsblv)
+MIT © [Dmitriy Sobolev](https://github.com/dsblv)

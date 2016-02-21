@@ -1,51 +1,75 @@
 import test from 'ava';
-import pinkiePromise from 'pinkie-promise';
 import Queue from './';
 
-global.Promise = pinkiePromise;
+function fixture() {
+	return Promise.resolve(1337);
+}
 
-test('not delaying first request', async t => {
+function nonPromiseFixture() {
+	return 1337;
+}
+
+test('not delaying first function', async t => {
 	const queue = new Queue(500);
 	const start = Date.now();
 
-	await queue.up();
+	await queue.up(fixture);
 
-	t.ok(Date.now() - start < 100);
+	t.true(Date.now() - start < 100);
 });
 
-test('delaying second request', async t => {
+test('delaying second function', async t => {
 	const queue = new Queue(500);
 	const start = Date.now();
 
-	queue.up();
+	queue.up(fixture);
 
-	await queue.up();
+	await queue.up(fixture);
 
 	const finish = Date.now();
-	t.ok(finish - start > 450 && finish - start < 550);
+
+	t.true(finish - start > 450 && finish - start < 550);
 });
 
-test('delaying third request', async t => {
+test('delaying third function', async t => {
 	const queue = new Queue(500);
 	const start = Date.now();
 
-	queue.up();
-	queue.up();
+	queue.up(fixture);
+	queue.up(fixture);
 
-	await queue.up();
+	await queue.up(fixture);
 
 	const finish = Date.now();
-	t.ok(finish - start > 950 && finish - start < 1050);
+
+	t.true(finish - start > 950 && finish - start < 1050);
 });
 
-test('passing value', async t => {
-	const value = await (new Queue()).up(1337);
-	t.is(value, 1337);
+test(`keeping resolved value`, async t => {
+	const queue = new Queue(100);
+
+	const res = await queue.up(fixture);
+
+	t.is(res, 1337);
 });
 
-test('custom Promise module', async t => {
-	const queue = new Queue(500, pinkiePromise);
+test('resolving non-promises', async t => {
+	const queue = new Queue(100);
 
-	await queue.up();
-	t.pass();
+	const res = await queue.up(nonPromiseFixture);
+
+	t.is(res, 1337);
+});
+
+test('queue from array', async t => {
+	const queue = new Queue(100);
+
+	const res = await queue.all([
+		fixture,
+		fixture,
+		nonPromiseFixture,
+		nonPromiseFixture
+	]);
+
+	t.same(res, [1337, 1337, 1337, 1337]);
 });
