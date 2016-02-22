@@ -29,7 +29,7 @@ const usernames = [
 	'octocat'
 ];
 
-opts = {
+const opts = {
 	token: 'the-private-token'
 };
 
@@ -43,7 +43,7 @@ for (let username of usernames) {
 
 ## API
 
-### new Queue([interval])
+### new Queue([interval, initialValue])
 
 Creates new instance of Queue.
 
@@ -51,6 +51,29 @@ Creates new instance of Queue.
 
 Type: `number`  
 Default: `1000`
+
+Time in `ms` from when previous function resolves to when next is invoked.
+
+#### initialValue
+
+Type: `any`  
+Default: `undefined`
+
+Every function in a queue gets result of the previous one as an argument. If you specify `initialValue`, it will be fed to the first function:
+
+```js
+function double(value) {
+	return value * 2;
+}
+
+const queue = new Queue(100, 1337);
+
+queue.up(double).then(console.log);
+//=> 2674
+
+queue.up(double).then(console.log);
+//=> 5348 (after 100ms)
+```
 
 
 ### queue.up(fn)
@@ -69,7 +92,7 @@ A `function` to be enqueued. Doesn't necessarily need to return a `promise`.
 
 ### queue.all(fns)
 
-Like [`Promise.all()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all), but with interval between invocations.
+Enqueues several function and returns a `promise` that resolves to an `array` of all results.
 
 #### fns
 
@@ -78,6 +101,16 @@ Type: `iterable` (e.g. `array`)
 
 An iterable object of functions to be enqueued.
 
+```js
+function double(value) {
+	return value * 2;
+}
+
+const queue = new Queue(100, 1337);
+
+queue.all([double, double]).then(console.log);
+//=> [2674, 5348] (after 100ms)
+```
 
 ## License
 

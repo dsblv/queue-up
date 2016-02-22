@@ -9,6 +9,10 @@ function nonPromiseFixture() {
 	return 1337;
 }
 
+function argumentAcceptingFixture(previousValue) {
+	return previousValue * 2;
+}
+
 test('not delaying first function', async t => {
 	const queue = new Queue(500);
 	const start = Date.now();
@@ -72,4 +76,13 @@ test('queue from array', async t => {
 	]);
 
 	t.same(res, [1337, 1337, 1337, 1337]);
+});
+
+test('passing initialValue', async t => {
+	const queue = new Queue(100, 1337);
+
+	queue.up(argumentAcceptingFixture);
+	const res = await queue.up(argumentAcceptingFixture);
+
+	t.is(res, 5348);
 });

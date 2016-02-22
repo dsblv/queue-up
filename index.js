@@ -1,9 +1,9 @@
 'use strict';
 var delay = require('delay');
 
-var Queue = module.exports = function (interval) {
+var Queue = module.exports = function (interval, initialValue) {
 	this.interval = interval || 1000;
-	this.remaining = Promise.resolve();
+	this.remaining = Promise.resolve(initialValue);
 };
 
 Queue.prototype.up = Queue.prototype.enqueue = function (fn) {
