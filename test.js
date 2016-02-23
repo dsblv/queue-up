@@ -1,5 +1,9 @@
-import test from 'ava';
-import Queue from './';
+import ava from 'ava';
+import timeSpan from 'time-span';
+import inRange from 'in-range';
+import Fn from './';
+
+const test = ava.serial;
 
 function fixture() {
 	return Promise.resolve(1337);
@@ -14,43 +18,39 @@ function argumentAcceptingFixture(previousValue) {
 }
 
 test('not delaying first function', async t => {
-	const queue = new Queue(500);
-	const start = Date.now();
+	const queue = new Fn();
+	const end = timeSpan();
 
 	await queue.up(fixture);
 
-	t.true(Date.now() - start < 100);
+	t.true(inRange(end(), 10));
 });
 
 test('delaying second function', async t => {
-	const queue = new Queue(500);
-	const start = Date.now();
+	const queue = new Fn(100);
+	const end = timeSpan();
 
 	queue.up(fixture);
 
 	await queue.up(fixture);
 
-	const finish = Date.now();
-
-	t.true(finish - start > 450 && finish - start < 550);
+	t.true(inRange(end(), 90, 110));
 });
 
 test('delaying third function', async t => {
-	const queue = new Queue(500);
-	const start = Date.now();
+	const queue = new Fn(100);
+	const end = timeSpan();
 
 	queue.up(fixture);
 	queue.up(fixture);
 
 	await queue.up(fixture);
 
-	const finish = Date.now();
-
-	t.true(finish - start > 950 && finish - start < 1050);
+	t.true(inRange(end(), 190, 210));
 });
 
 test(`keeping resolved value`, async t => {
-	const queue = new Queue(100);
+	const queue = new Fn(100);
 
 	const res = await queue.up(fixture);
 
@@ -58,7 +58,7 @@ test(`keeping resolved value`, async t => {
 });
 
 test('resolving non-promises', async t => {
-	const queue = new Queue(100);
+	const queue = new Fn(100);
 
 	const res = await queue.up(nonPromiseFixture);
 
@@ -66,7 +66,8 @@ test('resolving non-promises', async t => {
 });
 
 test('queue from array', async t => {
-	const queue = new Queue(100);
+	const queue = new Fn(100);
+	const end = timeSpan();
 
 	const res = await queue.all([
 		fixture,
@@ -76,13 +77,16 @@ test('queue from array', async t => {
 	]);
 
 	t.same(res, [1337, 1337, 1337, 1337]);
+	t.true(inRange(end(), 290, 310));
 });
 
 test('passing initialValue', async t => {
-	const queue = new Queue(100, 1337);
+	const queue = new Fn(100, 1337);
+	const end = timeSpan();
 
 	queue.up(argumentAcceptingFixture);
 	const res = await queue.up(argumentAcceptingFixture);
 
 	t.is(res, 5348);
+	t.true(inRange(end(), 90, 110));
 });
